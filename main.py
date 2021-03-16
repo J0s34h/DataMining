@@ -107,5 +107,5 @@ def main(login=None, password=None):
     conn.close()
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     main(login=sys.argv[1], password=sys.argv[2])
