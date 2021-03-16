@@ -5,7 +5,6 @@ import vk_api
 import emoji
 import psycopg2
 import psycopg2.errors
-
 # Local Variables
 from psycopg2._psycopg import cursor
 
@@ -16,8 +15,8 @@ clubFilter = r'club[0-9]+[A-Z]*\S*'
 post_cache = {}
 
 try:
-    conn = psycopg2.connect(dbname='vk_database', user='postgres',
-                            password='123123', host='localhost')
+    conn = psycopg2.connect(dbname='', user='postgres',
+                            password='Erika1944', host='database-1.cfrqfkiv7xzd.us-east-1.rds.amazonaws.com')
     cursor = conn.cursor()
     cursor.execute("DROP TABLE IF EXISTS COUNTER")
 
@@ -52,11 +51,11 @@ def word_handler(word):
         word = re.sub(clubFilter, "", word)
         word = re.sub(metaCharFilter, "", word)
         if word != "":
-            rawWord = (word)
-            if post_cache.contains(rawWord):
-                post_cache[rawWord] += 1
+            raw_word = repr(word.lower())
+            if post_cache.__contains__(raw_word):
+                post_cache[raw_word] += 1
             else:
-                post_cache[rawWord] = 0
+                post_cache[raw_word] = 0
 
 
 def post_hander(post):
@@ -82,13 +81,13 @@ def main(login=None, password=None):
         return
 
     tools = vk_api.VkTools(vk_session)
-    wall = tools.get_all_iter('wall.get', 1, {'domain': "itis_kfu"})
+    wall = tools.get_all_slow_iter('wall.get', 1, {'domain': "itis_kfu"})
 
     print("Starting processing posts")
 
     count = 0
 
-    for post in wall.iter():
+    for post in wall.__iter__():
         text = post['text']
         word = ""
         for char in split(text):
@@ -108,5 +107,5 @@ def main(login=None, password=None):
     conn.close()
 
 
-if name == 'main':
+if __name__ == 'main':
     main(login=sys.argv[1], password=sys.argv[2])
