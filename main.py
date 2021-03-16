@@ -1,12 +1,33 @@
 import sys
 import re
+
 import vk_api
 import emoji
+import psycopg2
+import psycopg2.errors
 
 # Local Variables
+from psycopg2._psycopg import cursor
+
 urlFilter = r'\S((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*\S'
-metaCharFilter = r'[!@#$%^&*(;":,./<>?`~=_+\]\}\{\[\|\-)r]'
+metaCharFilter = r'[!@#»«$%^&*(;":,./<>?`~=_+\]\}\{\[\|\-)r]'
 clubFilter = r'club[0-9]+[A-Z]*\S*'
+
+post_cache = {}
+
+try:
+    conn = psycopg2.connect(dbname='vk_database', user='postgres',
+                            password='123123', host='localhost')
+    cursor = conn.cursor()
+    cursor.execute("DROP TABLE IF EXISTS COUNTER")
+
+    sql = '''CREATE TABLE COUNTER(
+       WORD VARCHAR NOT NULL UNIQUE,
+       ENCOUNTERS INT NOT NULL
+    )'''
+    cursor.execute(sql)
+except psycopg2.errors as e:
+    print('Error %s' % e)
 
 
 def captcha_handler(captcha):
@@ -31,7 +52,21 @@ def word_handler(word):
         word = re.sub(clubFilter, "", word)
         word = re.sub(metaCharFilter, "", word)
         if word != "":
-            print(repr(word)     + "\n")
+            rawWord = (word)
+            if post_cache.contains(rawWord):
+                post_cache[rawWord] += 1
+            else:
+                post_cache[rawWord] = 0
+
+
+def post_hander(post):
+    for key in post:
+        cursor.execute('select * from COUNTER where word=%s', (key,))
+        if cursor.rowcount != 0:
+            row = cursor.fetchone()
+            cursor.execute('UPDATE COUNTER SET ENCOUNTERS = %s  WHERE word=%s', (row[1] + 1, key))
+        else:
+            cursor.execute('INSERT INTO COUNTER (WORD, ENCOUNTERS) VALUES (%s, %s)', (key, 0))
 
 
 def main(login=None, password=None):
@@ -47,9 +82,13 @@ def main(login=None, password=None):
         return
 
     tools = vk_api.VkTools(vk_session)
-    wall = tools.get_all_slow_iter('wall.get', 1, {'domain': "itis_kfu"})
+    wall = tools.get_all_iter('wall.get', 1, {'domain': "itis_kfu"})
 
-    for post in wall.__iter__():
+    print("Starting processing posts")
+
+    count = 0
+
+    for post in wall.iter():
         text = post['text']
         word = ""
         for char in split(text):
@@ -58,7 +97,16 @@ def main(login=None, password=None):
                 word = ""
             elif char_checker(char):
                 word += char
+        post_hander(post_cache)
+        post_cache.clear()
+        conn.commit()
+        print("Post number " + str(count) + " is loaded")
+        count += 1
+
+    print("Total " + str(count) + " posts processed")
+
+    conn.close()
 
 
-if __name__ == '__main__':
+if name == 'main':
     main(login=sys.argv[1], password=sys.argv[2])
