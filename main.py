@@ -8,10 +8,6 @@ import psycopg2.errors
 # Filter
 import emoji
 import re
-import nltk
-from nltk.corpus import stopwords
-
-nltk.download('stopwords')
 
 # Local Variables
 TOKEN = "fa267307fa267307fa2673074ffa50e889ffa26fa2673079a11a84f2cb2d50acb0df095"
@@ -40,9 +36,6 @@ def split(word):
 
 
 def word_handler(word):
-    if word in stopwords.words('russian'):
-        return
-
     word = word.replace("\n", "")
     if not (re.search(url_filter, repr(word))):
         word = re.sub(club_filter, "", word)

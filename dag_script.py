@@ -16,8 +16,6 @@ args = {
     'depends_on_past': False,
 }
 
-nltk.download('stopwords')
-
 # Local Variables
 TOKEN = "fa267307fa267307fa2673074ffa50e889ffa26fa2673079a11a84f2cb2d50acb0df095"
 url_filter = r'\S((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*\S'
@@ -26,18 +24,6 @@ club_filter = r'club[0-9]+[A-Z]*\S*'
 post_cache = {}
 
 conn = psycopg2
-
-nltk.download('stopwords')
-
-# Local Variables
-TOKEN = "fa267307fa267307fa2673074ffa50e889ffa26fa2673079a11a84f2cb2d50acb0df095"
-url_filter = r'\S((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*\S'
-meta_char_filter = r'[!@#»«$%^&*(;":,./<>?`~=_+\]\}\{\[\|\-)r]'
-club_filter = r'club[0-9]+[A-Z]*\S*'
-post_cache = {}
-
-conn = psycopg2
-
 
 def captcha_handler(captcha):
     key = input("Enter captcha code {0}: ".format(captcha.get_url())).strip()
@@ -56,9 +42,6 @@ def split(word):
 
 
 def word_handler(word):
-    if word in stopwords.words('russian'):
-        return
-
     word = word.replace("\n", "")
     if not (re.search(url_filter, repr(word))):
         word = re.sub(club_filter, "", word)
