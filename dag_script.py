@@ -109,7 +109,7 @@ def logic_function():
 
 
 with DAG(dag_id='dag_script', default_args=args, schedule_interval=None) as dag:
-    parse_vk_itis = PythonOperator(
+    parser = PythonOperator(
         task_id='dag_script_task_id',
         python_callable=logic_function,
         dag=dag
