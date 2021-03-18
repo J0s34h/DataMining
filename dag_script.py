@@ -11,9 +11,6 @@ from nltk.corpus import stopwords
 args = {
     'owner': 'airflow',
     'start_date': datetime.datetime(2021, 3, 18),
-    'retries': 1,
-    'retry_delay': datetime.timedelta(minutes=20),
-    'depends_on_past': False,
 }
 
 
@@ -108,9 +105,10 @@ def logic_function():
     conn.close()
 
 
-with DAG(dag_id='dag_script', default_args=args, schedule_interval=None) as dag:
-    parser = PythonOperator(
-        task_id='dag_script_task_id',
-        python_callable=logic_function,
-        dag=dag
-    )
+dag = DAG('dag_script', schedule_interval=None,
+          default_args=args)
+
+t1 = PythonOperator(
+    task_id='dag_script_task',
+    dag=dag,
+    python_callable=logic_function)
