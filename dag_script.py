@@ -1,23 +1,31 @@
-import datetime
-from airflow.models import DAG
-from airflow.operators.python_operator import PythonOperator
+from datetime import timedelta
 
-args = {
+# The DAG object; we'll need this to instantiate a DAG
+from airflow import DAG
+
+# Operators; we need this to operate!
+from airflow.operators.bash import BashOperator
+from airflow.utils.dates import days_ago
+
+
+def test_function():
+    print("COOL VALUE")
+
+
+default_args = {
     'owner': 'airflow',
-    'start_date': datetime.datetime(2021, 3, 16),
-    'retries': 1,
-    'retry_delay': datetime.timedelta(minutes=1),
     'depends_on_past': False,
+    'email': ['airflow@example.com'],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
 }
-
-
-def start():
-    print("Dag Function")
-
-
-with DAG(dag_id='dag_script', default_args=args, schedule_interval=None) as dag:
-    dag_script_operator = PythonOperator(
-        task_id='dag_script',
-        python_callable=start,
-        dag=dag
-    )
+dag = DAG(
+    'dag_script',
+    default_args=default_args,
+    description='Simple dag_script',
+    schedule_interval=timedelta(days=1),
+    start_date=days_ago(2),
+    tags=['dag_script'],
+)
