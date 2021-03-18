@@ -1,32 +1,27 @@
 import sys
-import re
 
+# API
 import vk_api
-import emoji
+# DB
 import psycopg2
 import psycopg2.errors
-# Local Variables
 from psycopg2._psycopg import cursor
+# Filter
+import emoji
+import re
+import nltk
+from nltk.corpus import stopwords
 
-urlFilter = r'\S((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*\S'
-metaCharFilter = r'[!@#»«$%^&*(;":,./<>?`~=_+\]\}\{\[\|\-)r]'
-clubFilter = r'club[0-9]+[A-Z]*\S*'
+nltk.download('stopwords')
 
+# Local Variables
+TOKEN = "fa267307fa267307fa2673074ffa50e889ffa26fa2673079a11a84f2cb2d50acb0df095"
+url_filter = r'\S((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z0-9\&\.\/\?\:@\-_=#])*\S'
+meta_char_filter = r'[!@#»«$%^&*(;":,./<>?`~=_+\]\}\{\[\|\-)r]'
+club_filter = r'club[0-9]+[A-Z]*\S*'
 post_cache = {}
 
-try:
-    conn = psycopg2.connect(dbname='', user='postgres',
-                            password='Erika1944', host='database-1.cfrqfkiv7xzd.us-east-1.rds.amazonaws.com')
-    cursor = conn.cursor()
-    cursor.execute("DROP TABLE IF EXISTS COUNTER")
-
-    sql = '''CREATE TABLE COUNTER(
-       WORD VARCHAR NOT NULL UNIQUE,
-       ENCOUNTERS INT NOT NULL
-    )'''
-    cursor.execute(sql)
-except psycopg2.errors as e:
-    print('Error %s' % e)
+conn = psycopg2
 
 
 def captcha_handler(captcha):
@@ -47,18 +42,18 @@ def split(word):
 
 def word_handler(word):
     word = word.replace("\n", "")
-    if not re.search(urlFilter, repr(word)):
-        word = re.sub(clubFilter, "", word)
-        word = re.sub(metaCharFilter, "", word)
+    if not (re.search(url_filter, repr(word)) or word in stopwords.words('russian')):
+        word = re.sub(club_filter, "", word)
+        word = re.sub(meta_char_filter, "", word)
         if word != "":
-            raw_word = repr(word.lower())
+            raw_word = word.lower()
             if post_cache.__contains__(raw_word):
                 post_cache[raw_word] += 1
             else:
                 post_cache[raw_word] = 0
 
 
-def post_hander(post):
+def post_handler(post):
     for key in post:
         cursor.execute('select * from COUNTER where word=%s', (key,))
         if cursor.rowcount != 0:
@@ -68,14 +63,33 @@ def post_hander(post):
             cursor.execute('INSERT INTO COUNTER (WORD, ENCOUNTERS) VALUES (%s, %s)', (key, 0))
 
 
-def main(login=None, password=None):
+def main():
+    try:
+        print("Connecting to database")
+        conn = psycopg2.connect(dbname='', user='postgres',
+                                password='Erika1944', host='database-1.cfrqfkiv7xzd.us-east-1.rds.amazonaws.com')
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE IF EXISTS COUNTER")
+
+        sql = '''CREATE TABLE COUNTER(
+           WORD VARCHAR NOT NULL UNIQUE,
+           ENCOUNTERS INT NOT NULL
+        )'''
+        cursor.execute(sql)
+    except psycopg2.errors as e:
+        print('Error %s' % e)
+        return
+
+    print("Successful connection to database")
+
     vk_session = vk_api.VkApi(
-        login, password,
-        captcha_handler=captcha_handler
+        token=TOKEN
     )
 
+    print("Connecting to VK")
+
     try:
-        vk_session.auth()
+        vk_session.get_api()
     except vk_api.AuthError as error_msg:
         print(error_msg)
         return
@@ -90,16 +104,16 @@ def main(login=None, password=None):
     for post in wall.__iter__():
         text = post['text']
         word = ""
+        print("Post number " + str(count) + " is loaded")
         for char in split(text):
             if char == " ":
                 word_handler(word)
                 word = ""
             elif char_checker(char):
                 word += char
-        post_hander(post_cache)
+        post_handler(post_cache)
         post_cache.clear()
         conn.commit()
-        print("Post number " + str(count) + " is loaded")
         count += 1
 
     print("Total " + str(count) + " posts processed")
@@ -108,4 +122,4 @@ def main(login=None, password=None):
 
 
 if __name__ == '__main__':
-    main(login=sys.argv[1], password=sys.argv[2])
+    main()
