@@ -101,11 +101,16 @@ def main(login=None, password=None):
         conn.commit()
         print("Post number " + str(count) + " is loaded")
         count += 1
+        if count == 200:
+            return
 
     print("Total " + str(count) + " posts processed")
 
     conn.close()
 
+def starter():
+    main(login="89274066643", password="DullEstok1337")
+
 
 if __name__ == '__main__':
-    main(login=sys.argv[1], password=sys.argv[2])
+    starter()
