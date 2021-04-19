@@ -1,3 +1,6 @@
+from copy import copy
+from multiprocessing import Process, Queue
+
 import requests
 import colorama
 import sys
@@ -7,12 +10,13 @@ import time
 
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
-
 from fractions import Fraction
 
 import treelib
 from treelib import Tree
 from graphviz import Digraph
+
+import _thread
 
 tree = Tree()
 main_graph = Digraph()
@@ -34,6 +38,7 @@ total_urls_visited = 0
 node_connections = dict()
 
 threads = [threading.Thread]
+active_threads_count = 0
 
 
 def is_valid(url):
@@ -102,18 +107,6 @@ def crawl(url, max_depth=1, depth=1, parent_url="Parent url", total_urls_seen=0)
 
     links = get_all_website_links(url, parent_url=url)
 
-    # with ThreadPoolExecutor() as executor:
-    #     for link in links:
-    #         total_urls_seen += 1
-    #         if depth == max_depth:
-    #             print(f"Thread has reached required depth {total_urls_seen}")
-    #             break
-    #         elif total_urls_seen > 1000:
-    #             print("Thread has seen enough")
-    #             break
-    #         executor.submit(crawl, url=link, depth=depth + 1, max_depth=max_depth, parent_url=link,
-    #                         total_urls_seen=total_urls_seen)
-
     for link in links:
         total_urls_seen += 1
         if depth == max_depth:
@@ -122,12 +115,15 @@ def crawl(url, max_depth=1, depth=1, parent_url="Parent url", total_urls_seen=0)
         elif total_urls_seen > max_urls:
             print("Thread has seen enough")
             break
-        # Process(target=crawl, args=(link, max_depth, depth + 1, link, total_urls_seen)).start()
-        thread = threading.Thread(target=crawl, args=(link, max_depth, depth + 1, link, total_urls_seen))
-
-        thread.start()
-
+        # thread = threading.Thread(target=crawl, args=(link, max_depth, depth + 1, link, total_urls_seen))
+        # thread.start()
+        # thread.join(256)
+        global active_threads_count
+        active_threads_count += 1
+        _thread.start_new_thread(crawl, (link, max_depth, depth + 1, link, total_urls_seen))
         # crawl(link, max_depth, depth + 1, link, total_urls_seen)
+
+    active_threads_count -= 1
     return
 
     # crawl(link, depth=depth + 1, parentUrl=link)
@@ -137,7 +133,7 @@ def remove_protocol(url):
     if url[len(url) - 1] == "/":
         url = url[:-1]
 
-    return url.replace(":", "")
+    return copy(str(url)).replace(":", "-")
 
 
 def add_node(childUrl, parentUrl, is_external=True):
@@ -150,53 +146,80 @@ def add_node(childUrl, parentUrl, is_external=True):
         else:
             node_connections.__setitem__(parentUrl, set(childUrl))
 
-        # if is_external:
-        #     if not external_urls.__contains__(childUrl):
-        #         main_graph.node(remove_protocol(childUrl), remove_protocol(childUrl), color="red")
-        #     # if not external_urls.__contains__(parentUrl):
-        #     #     main_graph.node(remove_protocol(parentUrl), remove_protocol(parentUrl), color="red")
-        # else:
-        #     if not internal_urls.__contains__(childUrl):
-        #         main_graph.node(remove_protocol(childUrl), remove_protocol(childUrl), color="blue")
-        #     # if not internal_urls.__contains__(parentUrl):
-        #     #     main_graph.node(remove_protocol(parentUrl), remove_protocol(parentUrl), color="blue")
-
         tree.create_node(childUrl, childUrl, parent=parentUrl)
     except treelib.exceptions.DuplicatedNodeIdError:
         # DO NOTHING, convenience tree can't handle duplicate leaves
         return
 
 
-def transpon(matrix):
+def transform(matrix):
     return [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
 
 
 def page_rank_calcualtor(vector, matrix):
     old_vector = vector
-    new_vector = vector
-    print(old_vector)
-    for i in range(1000):
+    new_vector = [Fraction() for x in range(len(vector))]
+    while True:
         vector_index = 0
         for matrix_row in matrix:
-            multiplication_sum = Fraction(0)
+            multiplication_sum = Fraction()
             index = 0
             for number in matrix_row:
                 multiplication_sum = multiplication_sum.__add__(
                     old_vector[index].__mul__(number))
                 index += 1
-            new_vector[vector_index] = Fraction(multiplication_sum)
+            multiplication_sum = multiplication_sum.__mul__(Fraction(8, 10))
+            multiplication_sum = multiplication_sum.__add__(Fraction(2, 10).__truediv__(Fraction(len(vector), 1)))
+
+            new_vector[vector_index] = multiplication_sum
             vector_index += 1
-        for value in new_vector:
-            value.__mul__(Fraction(8, 10))
-            value.__add__(Fraction(2, 10).__divmod__(Fraction(len(new_vector), 1)))
-        old_vector = new_vector
-        print(sum(new_vector).numerator / sum(new_vector).denominator)
+        # Comparing old and new vectors
+        min_difference = sys.maxsize
+        for index in range(len(new_vector)):
+            diff = abs(old_vector[index] - new_vector[index])
+            if diff < min_difference:
+                min_difference = diff
+        old_vector = [new_vector[x] for x in range(len(new_vector))]
+
+        if min_difference < 0.00001:
+            break
 
     return new_vector
 
 
+def edges_filter(edges_dict):
+    restart = False
+
+    # if edges_dict is dict:
+    allowed_urls = list(edges_dict.keys())
+
+    ingoing_urls = set()
+    for key_idx in range(len(allowed_urls)):
+        key = allowed_urls[key_idx]
+        outgoing_urls = set()
+        # Take only allowed urls
+        for out_url in edges_dict.get(key):
+            if allowed_urls.__contains__(out_url):
+                outgoing_urls.add(out_url)
+        #
+        if len(outgoing_urls) == 0:
+            edges_dict.__delitem__(key)
+            restart = True
+        elif len(outgoing_urls) == 1:
+            edges_dict.__delitem__(key)
+            restart = True
+        else:
+            edges_dict.__setitem__(key, outgoing_urls)
+
+        if restart:
+            return edges_filter(edges_dict)
+    return edges_dict
+
+
 if __name__ == "__main__":
     import argparse
+
+    active_threads_count = 0
 
     print(f"{GREEN} Max depth limit: {sys.getrecursionlimit()}{RESET}")
     sys.setrecursionlimit(12_000)
@@ -216,12 +239,13 @@ if __name__ == "__main__":
     internal_urls.add(url)
     crawl(url, parent_url=url, max_depth=max_depth)
     lastLength = -1
-    while True:
-        if threading.activeCount() <= 2:
-            break
-        elif threading.activeCount() == lastLength:
-            break
-        lastLength = threading.activeCount()
+    while active_threads_count > 0:
+        # if threading.activeCount() <= 2:
+        #     break
+        # elif threading.activeCount() == lastLength:
+        #     break
+        # lastLength = threading.activeCount()
+        print(f"Threads running: {active_threads_count}")
         time.sleep(30)
 
     print("[+] Total Internal links:", len(internal_urls))
@@ -230,73 +254,41 @@ if __name__ == "__main__":
 
     domain_name = urlparse(url).netloc
 
-    # save the internal links to a file
-    with open(f"{domain_name}_internal_links.txt", "w") as f:
-        for internal_link in internal_urls:
-            print(internal_link.strip(), file=f)
+    try:
+        # save the internal links to a file
+        with open(f"{domain_name}_internal_links.txt", "w") as f:
+            for internal_link in internal_urls:
+                print(internal_link, file=f)
 
-    # save the external links to a file
-    with open(f"{domain_name}_external_links.txt", "w") as f:
-        for external_link in external_urls:
-            print(external_link.strip(), file=f)
+        # save the external links to a file
+        with open(f"{domain_name}_external_links.txt", "w") as f:
+            for external_link in external_urls:
+                print(external_link, file=f)
+    except:
+        print("Could not save")
 
     tree.save2file('tree.txt')
     tree.to_graphviz("graph.gv")
 
-    tree.show()
+    # tree.show()
 
-    all_urls_set = set()
-    all_urls_set.update(external_urls)
-    all_urls_set.update(internal_urls)
+    node_connections = edges_filter(node_connections)
+    white_list = node_connections.keys()
 
-    all_urls = list(all_urls_set)
-
-    white_list = set(node_connections.keys())
-
-    filtered_node_connection = dict()
-
-    redo = True
-    trusted_url = set()
-    while redo:
-        redo = False
-        for k, v in node_connections.items():
-            if not white_list.__contains__(k):
-                continue
-
-            result_set = set()
-            for link in v:
-                if white_list.__contains__(link) and link != k:
-                    trusted_url.add(link)
-                    result_set.add(link)
-
-            if len(result_set) == 0:
-                trusted_url.remove(k)
-                white_list.remove(k)
-                redo = True
-                continue
-
-            # if len(result_set) == 1:
-            #     if not trusted_url.__contains__(k):
-            #         white_list.remove(k)
-            #         redo = True
-            #         continue
-
-            if len(result_set) > 0:
-                filtered_node_connection.__setitem__(k, result_set)
-
-        node_connections = filtered_node_connection
+    print(node_connections)
+    print(white_list)
 
     for link in white_list:
         if link == remove_protocol(url):
-            main_graph.node(remove_protocol(link), color="violet")
+            main_graph.node(name=remove_protocol(link), label=link, color="violet")
             continue
 
         if external_urls.__contains__(link):
-            main_graph.node(remove_protocol(link), color="red")
+            main_graph.node(name=remove_protocol(link), label=link, color="red")
         else:
-            main_graph.node(remove_protocol(link), color="blue")
+            main_graph.node(name=remove_protocol(link), label=link, color="blue")
 
-    for k, v in filtered_node_connection.items():
+    for k, v in node_connections.items():
         for connectedTo in v:
             main_graph.edge(remove_protocol(k), remove_protocol(connectedTo))
 
@@ -320,7 +312,7 @@ if __name__ == "__main__":
 
         print("\n")
 
-        matrix = transpon(matrix)
+        matrix = transform(matrix)
 
         for row in matrix:
             print(row)
@@ -335,7 +327,10 @@ if __name__ == "__main__":
         print(f"{page_rank_dict} \n")
         print(sum(page_rank_vector))
 
-        main_graph.render(filename="TEST.gv")
+        for k, v in page_rank_dict.items():
+            print(f"page {k} has value {v.numerator / v.denominator}")
+
+        main_graph.render(filename="PAGERANK_GRAPH.gv")
         main_graph.view()
     else:
         print("EMPTY MATRIX")
