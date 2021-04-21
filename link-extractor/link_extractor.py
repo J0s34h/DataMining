@@ -301,8 +301,12 @@ def finalize():
                 print(row, file=f)
 
         with open(f"{domain_name}_page_rank.txt", "w") as f:
-            for item in page_rank_dict.items():
-                print(item, file=f)
+            # for item in page_rank_dict.items():
+            #     print(item, file=f)
+            sorted_list = sorted(all_urls, key=lambda k: page_rank_dict[k])
+            for item in sorted_list:
+                fract = page_rank_dict.get(item)
+                print(f"{item} {fract} {fract.numerator / fract.denominator}", file=f)
 
         time_spend = time.time() - start_time
         print(f"{GREEN}[!] Time wasted: {time_spend}{RESET}")
