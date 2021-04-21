@@ -1,6 +1,13 @@
 from copy import copy
+import pydot
 from multiprocessing import Process, Queue
 
+import matplotlib as matplotlib
+from pandas import DataFrame
+
+matplotlib.use('PS')
+import matplotlib.pyplot as plt
+import nx as nx
 import requests
 import colorama
 import sys
@@ -12,13 +19,10 @@ from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 from fractions import Fraction
 
-import treelib
-from treelib import Tree
 from graphviz import Digraph
 
 import _thread
 
-tree = Tree()
 main_graph = Digraph()
 main_graph.clear()
 
@@ -27,6 +31,10 @@ colorama.init()
 
 GREEN = colorama.Fore.GREEN
 GRAY = colorama.Fore.LIGHTBLACK_EX
+RED = colorama.Fore.RED
+CYAN = colorama.Fore.CYAN
+BLACK = colorama.Fore.BLACK
+MAGENTA = colorama.Fore.LIGHTMAGENTA_EX
 RESET = colorama.Fore.RESET
 
 # initialize the set of links (unique links)
@@ -39,6 +47,9 @@ node_connections = dict()
 
 threads = [threading.Thread]
 active_threads_count = 0
+
+start_time = time.time()
+dont_ignore_threads = True
 
 
 def is_valid(url):
@@ -63,13 +74,19 @@ def get_all_website_links(url, parent_url=""):
         return urls
     except requests.exceptions.ConnectionError:
         return urls
+    except requests.exceptions.ConnectTimeout:
+        return urls
+    except requests.exceptions.ReadTimeout:
+        return urls
+    except:
+        return urls
 
     for a_tag in soup.findAll("a"):
         href = a_tag.attrs.get("href")
         if href == "" or href is None:
             # href empty tag
             continue
-        # join the URL if it's relative (not absolute link)
+        # join the URmmL if it's relative (not absolute link)
         href = urljoin(url, href)
         parsed_href = urlparse(href)
         # remove URL GET parameters, URL fragments, etc.
@@ -86,7 +103,7 @@ def get_all_website_links(url, parent_url=""):
             add_node(href, parent_url, is_external=True)
 
             if href not in external_urls:
-                print(f"{GRAY}[!] External link: {href}{RESET}")
+                print(f"{RED}[!] External link: {href}{RESET}")
                 urls.add(href)
                 external_urls.add(href)
             continue
@@ -98,35 +115,28 @@ def get_all_website_links(url, parent_url=""):
 
 
 def crawl(url, max_depth=1, depth=1, parent_url="Parent url", total_urls_seen=0):
-    """
-    Crawls a web page and extracts all links.
-    You'll find all links in `external_urls` and `internal_urls` global set variables.
-    params:
-        max_urls (int): number of max urls to crawl, default is 30.
-    """
-
     links = get_all_website_links(url, parent_url=url)
+
+    if depth == max_depth:
+        return
 
     for link in links:
         total_urls_seen += 1
-        if depth == max_depth:
-            print(f"Thread has reached required depth {total_urls_seen}")
+        if total_urls_seen > max_urls:
             break
-        elif total_urls_seen > max_urls:
-            print("Thread has seen enough")
-            break
-        # thread = threading.Thread(target=crawl, args=(link, max_depth, depth + 1, link, total_urls_seen))
+
+        # active_threads_count += 1
+        thread = threading.Thread(target=crawl, args=(link, max_depth, depth + 1, link, total_urls_seen))
+        threads.append(thread)
+        thread.start()
+
         # thread.start()
-        # thread.join(256)
-        global active_threads_count
-        active_threads_count += 1
-        _thread.start_new_thread(crawl, (link, max_depth, depth + 1, link, total_urls_seen))
+        # _thread.start_new_thread(crawl, (link, max_depth, depth + 1, link, total_urls_seen))
         # crawl(link, max_depth, depth + 1, link, total_urls_seen)
 
-    active_threads_count -= 1
-    return
-
-    # crawl(link, depth=depth + 1, parentUrl=link)
+    # active_threads_count -= 1
+    if threads.__contains__(threading.currentThread()):
+        threads.remove(threading.currentThread())
 
 
 def remove_protocol(url):
@@ -137,19 +147,15 @@ def remove_protocol(url):
 
 
 def add_node(childUrl, parentUrl, is_external=True):
-    try:
-        childUrl = remove_protocol(childUrl)
-        parentUrl = remove_protocol(parentUrl)
+    global node_connections
 
-        if node_connections.__contains__(parentUrl):
-            node_connections.get(parentUrl).add(childUrl)
-        else:
-            node_connections.__setitem__(parentUrl, set(childUrl))
+    childUrl = remove_protocol(childUrl)
+    parentUrl = remove_protocol(parentUrl)
 
-        tree.create_node(childUrl, childUrl, parent=parentUrl)
-    except treelib.exceptions.DuplicatedNodeIdError:
-        # DO NOTHING, convenience tree can't handle duplicate leaves
-        return
+    if node_connections.__contains__(parentUrl):
+        node_connections.get(parentUrl).add(childUrl)
+    else:
+        node_connections.__setitem__(parentUrl, set(childUrl))
 
 
 def transform(matrix):
@@ -216,41 +222,10 @@ def edges_filter(edges_dict):
     return edges_dict
 
 
-if __name__ == "__main__":
-    import argparse
-
-    active_threads_count = 0
-
-    print(f"{GREEN} Max depth limit: {sys.getrecursionlimit()}{RESET}")
-    sys.setrecursionlimit(12_000)
-
-    parser = argparse.ArgumentParser(description="Link Extractor Tool with Python")
-    parser.add_argument("url", help="The URL to extract links from.")
-    parser.add_argument("-m", "--max-urls", help="Number of max URLs to crawl, default is 30.", default=30, type=int)
-    parser.add_argument("-d", "--depth", help="Target depth of", default=1, type=int)
-
-    args = parser.parse_args()
-    url = args.url
-    max_urls = args.max_urls
-    max_depth = args.depth
-
-    tree.create_node(remove_protocol(url), remove_protocol(url))  # root
-
-    internal_urls.add(url)
-    crawl(url, parent_url=url, max_depth=max_depth)
-    lastLength = -1
-    while active_threads_count > 0:
-        # if threading.activeCount() <= 2:
-        #     break
-        # elif threading.activeCount() == lastLength:
-        #     break
-        # lastLength = threading.activeCount()
-        print(f"Threads running: {active_threads_count}")
-        time.sleep(30)
-
-    print("[+] Total Internal links:", len(internal_urls))
-    print("[+] Total External links:", len(external_urls))
-    print("[+] Total URLs:", len(external_urls) + len(internal_urls))
+def finalize():
+    print(f"{CYAN}[+] Total Internal links:{RESET}", len(internal_urls))
+    print(f"{CYAN}[+] Total External links:{RESET}", len(external_urls))
+    print(f"{CYAN}[+] Total URLs:{RESET}", len(external_urls) + len(internal_urls))
 
     domain_name = urlparse(url).netloc
 
@@ -265,18 +240,12 @@ if __name__ == "__main__":
             for external_link in external_urls:
                 print(external_link, file=f)
     except:
-        print("Could not save")
-
-    tree.save2file('tree.txt')
-    tree.to_graphviz("graph.gv")
-
-    # tree.show()
-
+        print(f"{RED}[!!] Could not save external, internal urls to file {RESET}")
+    global node_connections
     node_connections = edges_filter(node_connections)
     white_list = node_connections.keys()
 
-    print(node_connections)
-    print(white_list)
+    # print(f"\n{node_connections}\n")
 
     for link in white_list:
         if link == remove_protocol(url):
@@ -307,30 +276,88 @@ if __name__ == "__main__":
                 childIndex = all_urls.index(connectedTo)
                 matrix[parentIndex][childIndex] = Fraction(1, len(v))
 
-        for row in matrix:
-            print(row)
-
-        print("\n")
-
         matrix = transform(matrix)
 
-        for row in matrix:
-            print(row)
-
-        page_rank_vector = page_rank_calcualtor(vector=[Fraction(1, len(white_list)) for j in range(len(white_list))],
+        page_rank_vector = page_rank_calcualtor(vector=[Fraction(1, len(all_urls)) for j in range(len(all_urls))],
                                                 matrix=matrix)
         page_rank_dict = dict()
 
         for idx in range(len(page_rank_vector)):
-            page_rank_dict.__setitem__(list(white_list)[idx], page_rank_vector[idx])
+            page_rank_dict.__setitem__(all_urls[idx], page_rank_vector[idx])
 
-        print(f"{page_rank_dict} \n")
-        print(sum(page_rank_vector))
+        # print(f"{page_rank_dict} \n")
+        print(f"{GRAY}[!] Page rank vector's sum equals: {sum(page_rank_vector)}{RESET}")
 
         for k, v in page_rank_dict.items():
-            print(f"page {k} has value {v.numerator / v.denominator}")
+            print(f"{MAGENTA}[.] {k} pagerank equals: {v.numerator / v.denominator}{RESET}")
 
-        main_graph.render(filename="PAGERANK_GRAPH.gv")
+        # Output
+
+        with open(f"{domain_name}_matrix.txt", "w") as f:
+            print(all_urls, file=f)
+            for row in matrix:
+                print(row, file=f)
+
+        with open(f"{domain_name}_page_rank.txt", "w") as f:
+            for item in page_rank_dict.items():
+                print(item, file=f)
+
+        time_spend = time.time() - start_time
+        print(f"{GREEN}[!] Time wasted: {time_spend}{RESET}")
+        print(f"{GREEN}[!] With average speed {len(external_urls) + len(internal_urls) / time_spend} links per second")
+        print(f"{RED}[?] Rendering graph{RESET}")
+        main_graph.save()
+        main_graph.render(filename="PAGERANK_GRAPH")
         main_graph.view()
+
+
+        #
+        # (graph,) = pydot.graph_from_dot_file('somefile.dot')
+        # graph.write_png('somefile.png')
     else:
         print("EMPTY MATRIX")
+
+
+def thread_hunter():
+    last_count = -1
+    global dont_ignore_threads
+    while True:
+        if last_count == threading.activeCount() or threading.activeCount() == 1:
+            dont_ignore_threads = False
+            print(threads)
+
+            break
+        else:
+            last_count = threading.activeCount()
+            time.sleep(12)
+
+
+if __name__ == "__main__":
+    import argparse
+
+    active_threads_count = 0
+
+    print(f"{GREEN} Max depth limit: {sys.getrecursionlimit()}{RESET}")
+    sys.setrecursionlimit(12_000)
+
+    parser = argparse.ArgumentParser(description="Link Extractor Tool with Python")
+    parser.add_argument("url", help="The URL to extract links from.")
+    parser.add_argument("-m", "--max-urls", help="Number of max URLs to crawl, default is 30.", default=30, type=int)
+    parser.add_argument("-d", "--depth", help="Target depth of", default=1, type=int)
+
+    args = parser.parse_args()
+    url = args.url
+    max_urls = args.max_urls
+    max_depth = args.depth
+
+    internal_urls.add(url)
+    crawl(url, parent_url=url, max_depth=max_depth)
+
+    thread_killer = threading.Thread(target=thread_hunter)
+    thread_killer.start()
+
+    while threading.active_count() > 2 and dont_ignore_threads:
+        print(f"{GRAY}[+] Total threads running: {threading.active_count()}{RESET}")
+        time.sleep(1)
+
+    finalize()
