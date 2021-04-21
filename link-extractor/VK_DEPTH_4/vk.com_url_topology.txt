@@ -1,0 +1,271 @@
+https-//vk.com
+├── https-//static.vk.com/restore
+├── https-//vk.com/fv
+├── https-//vk.com/join
+│   └── https-//connect.vk.com/promo
+│       ├── https-//connect.vk.com/privacy
+│       ├── https-//connect.vk.com/terms
+│       ├── https-//vk.com/support
+│       └── https-//vk.com/team
+├── https-//vk.com/login
+├── https-//vk.com/settings
+└── https-//vk.me
+    └── https-//vk.com/blog/vkme
+        ├── http-//vk.com/print
+        ├── https-//new.vk.com/dev/ContactUs
+        ├── https-//vk.com/andrewnovoselsky
+        ├── https-//vk.com/away.php
+        └── https-//vk.com/blog
+https-//vk.com
+├── https-//static.vk.com/restore
+├── https-//vk.com/fv
+├── https-//vk.com/join
+│   └── https-//connect.vk.com/promo
+│       ├── https-//connect.vk.com/privacy
+│       ├── https-//connect.vk.com/terms
+│       ├── https-//vk.com/support
+│       │   ├── https-//m.vk.com/support
+│       │   ├── https-//vk.com/about
+│       │   ├── https-//vk.com/biz
+│       │   ├── https-//vk.com/dev
+│       │   ├── https-//vk.com/faq12155
+│       │   ├── https-//vk.com/jobs
+│       │   ├── https-//vk.com/restore
+│       │   └── https-//vk.com/terms
+│       └── https-//vk.com/team
+│           ├── http-//vk.com/2020
+│           ├── http-//vk.com/about
+│           ├── http-//vk.com/blog/2020
+│           ├── https-//m.vk.com/adminsclub
+│           ├── https-//m.vk.com/authors
+│           ├── https-//m.vk.com/blog/2020
+│           ├── https-//m.vk.com/business
+│           ├── https-//m.vk.com/superapp
+│           ├── https-//m.vk.com/vkclips
+│           ├── https-//m.vk.com/vkmusic
+│           ├── https-//m.vk.com/vkteam
+│           ├── https-//vk.com/@vk
+│           ├── https-//vk.com/albums-22822305
+│           ├── https-//vk.com/andrew
+│           ├── https-//vk.com/antontutryadom
+│           ├── https-//vk.com/attachments
+│           ├── https-//vk.com/fave
+│           ├── https-//vk.com/like
+│           ├── https-//vk.com/marinakrasnova
+│           ├── https-//vk.com/mintcharity
+│           ├── https-//vk.com/photo-22822305_457315000
+│           ├── https-//vk.com/photo-22822305_457315551
+│           ├── https-//vk.com/photo-22822305_457320270
+│           ├── https-//vk.com/photo6492_457256674
+│           ├── https-//vk.com/photo92933_457239972
+│           ├── https-//vk.com/press/birthday-14-results
+│           ├── https-//vk.com/reports
+│           ├── https-//vk.com/services
+│           ├── https-//vk.com/svetdeti
+│           ├── https-//vk.com/videos-22822305
+│           ├── https-//vk.com/vk
+│           ├── https-//vk.com/vkteam
+│           ├── https-//vk.com/wall
+│           ├── https-//vk.com/wall-19542789_119123
+│           ├── https-//vk.com/wall-22822305_1146176
+│           ├── https-//vk.com/wall-22822305_1148026
+│           ├── https-//vk.com/wall-22822305_1148195
+│           ├── https-//vk.com/wall-22822305_1148348
+│           ├── https-//vk.com/wall-22822305_1167538
+│           ├── https-//vk.com/wall6492_18910
+│           └── https-//vk.com/wall92933_362
+├── https-//vk.com/login
+├── https-//vk.com/settings
+└── https-//vk.me
+    └── https-//vk.com/blog/vkme
+        ├── http-//vk.com/print
+        │   ├── http-//vk.com
+        │   ├── http-//vk.com/fv
+        │   ├── http-//vk.com/join
+        │   ├── http-//vk.com/login
+        │   └── http-//vk.com/settings
+        ├── https-//new.vk.com/dev/ContactUs
+        │   ├── https-//new.vk.com
+        │   ├── https-//new.vk.com/about
+        │   ├── https-//new.vk.com/ads
+        │   ├── https-//new.vk.com/apps
+        │   ├── https-//new.vk.com/biz
+        │   ├── https-//new.vk.com/dev
+        │   ├── https-//new.vk.com/dev/Java_SDK
+        │   ├── https-//new.vk.com/dev/Javascript_SDK
+        │   ├── https-//new.vk.com/dev/Mobile_SDK
+        │   ├── https-//new.vk.com/dev/PHP_SDK
+        │   ├── https-//new.vk.com/dev/SDK
+        │   ├── https-//new.vk.com/dev/_faq_api
+        │   ├── https-//new.vk.com/dev/_faq_app
+        │   ├── https-//new.vk.com/dev/_faq_authorization
+        │   ├── https-//new.vk.com/dev/_faq_bags
+        │   ├── https-//new.vk.com/dev/_faq_bugs
+        │   ├── https-//new.vk.com/dev/_faq_callback
+        │   ├── https-//new.vk.com/dev/_faq_errors
+        │   ├── https-//new.vk.com/dev/_faq_publications
+        │   ├── https-//new.vk.com/dev/_faq_widgets
+        │   ├── https-//new.vk.com/dev/_objects_button_close_internal
+        │   ├── https-//new.vk.com/dev/_objects_feed_item
+        │   ├── https-//new.vk.com/dev/_objects_properties
+        │   ├── https-//new.vk.com/dev/_objects_variants
+        │   ├── https-//new.vk.com/dev/_objects_video_catalog_action
+        │   ├── https-//new.vk.com/dev/_objects_video_catalog_block
+        │   ├── https-//new.vk.com/dev/_objects_video_catalog_link
+        │   ├── https-//new.vk.com/dev/_objects_video_catalog_section
+        │   ├── https-//new.vk.com/dev/access_token
+        │   ├── https-//new.vk.com/dev/account
+        │   ├── https-//new.vk.com/dev/ads
+        │   ├── https-//new.vk.com/dev/ads_docs
+        │   ├── https-//new.vk.com/dev/android_sdk
+        │   ├── https-//new.vk.com/dev/android_sdk_tset
+        │   ├── https-//new.vk.com/dev/api_requests
+        │   ├── https-//new.vk.com/dev/appWidgets
+        │   ├── https-//new.vk.com/dev/apps
+        │   ├── https-//new.vk.com/dev/appterms_mobile
+        │   ├── https-//new.vk.com/dev/auth.getSilentAuthProviders
+        │   ├── https-//new.vk.com/dev/board
+        │   ├── https-//new.vk.com/dev/bots_docs
+        │   ├── https-//new.vk.com/dev/bots_longpoll
+        │   ├── https-//new.vk.com/dev/bugs
+        │   ├── https-//new.vk.com/dev/callback_api
+        │   ├── https-//new.vk.com/dev/catalog_rules
+        │   ├── https-//new.vk.com/dev/classifieds
+        │   ├── https-//new.vk.com/dev/classifieds.healthCheck
+        │   ├── https-//new.vk.com/dev/communities
+        │   ├── https-//new.vk.com/dev/database
+        │   ├── https-//new.vk.com/dev/docs
+        │   ├── https-//new.vk.com/dev/donut
+        │   ├── https-//new.vk.com/dev/donut_api
+        │   ├── https-//new.vk.com/dev/errors
+        │   ├── https-//new.vk.com/dev/externalUsers
+        │   ├── https-//new.vk.com/dev/faq1
+        │   ├── https-//new.vk.com/dev/faq2
+        │   ├── https-//new.vk.com/dev/fave
+        │   ├── https-//new.vk.com/dev/feedback
+        │   ├── https-//new.vk.com/dev/first_guide
+        │   ├── https-//new.vk.com/dev/flyink_tests
+        │   ├── https-//new.vk.com/dev/friends
+        │   ├── https-//new.vk.com/dev/games
+        │   ├── https-//new.vk.com/dev/getMessages
+        │   ├── https-//new.vk.com/dev/gifts
+        │   ├── https-//new.vk.com/dev/goods_docs
+        │   ├── https-//new.vk.com/dev/gpg
+        │   ├── https-//new.vk.com/dev/groups
+        │   ├── https-//new.vk.com/dev/groups_events
+        │   ├── https-//new.vk.com/dev/health
+        │   ├── https-//new.vk.com/dev/help
+        │   ├── https-//new.vk.com/dev/ios_sdk
+        │   ├── https-//new.vk.com/dev/json_schema
+        │   ├── https-//new.vk.com/dev/junction
+        │   ├── https-//new.vk.com/dev/leadForms
+        │   ├── https-//new.vk.com/dev/leads
+        │   ├── https-//new.vk.com/dev/likes
+        │   ├── https-//new.vk.com/dev/main123
+        │   ├── https-//new.vk.com/dev/manuals
+        │   ├── https-//new.vk.com/dev/market
+        │   ├── https-//new.vk.com/dev/marusia.getUsersWhoReceivedMaxGifts
+        │   ├── https-//new.vk.com/dev/marusia_rules
+        │   ├── https-//new.vk.com/dev/marusia_skill_docs
+        │   ├── https-//new.vk.com/dev/messages
+        │   ├── https-//new.vk.com/dev/methods
+        │   ├── https-//new.vk.com/dev/mobile
+        │   ├── https-//new.vk.com/dev/mobile_requirements_new
+        │   ├── https-//new.vk.com/dev/newsfeed
+        │   ├── https-//new.vk.com/dev/nikita
+        │   ├── https-//new.vk.com/dev/notes
+        │   ├── https-//new.vk.com/dev/notifications
+        │   ├── https-//new.vk.com/dev/objects
+        │   ├── https-//new.vk.com/dev/orders
+        │   ├── https-//new.vk.com/dev/pages
+        │   ├── https-//new.vk.com/dev/payments
+        │   ├── https-//new.vk.com/dev/photos
+        │   ├── https-//new.vk.com/dev/podcasts
+        │   ├── https-//new.vk.com/dev/polls
+        │   ├── https-//new.vk.com/dev/prettyCards
+        │   ├── https-//new.vk.com/dev/products
+        │   ├── https-//new.vk.com/dev/publications
+        │   ├── https-//new.vk.com/dev/r_first_guide
+        │   ├── https-//new.vk.com/dev/realtime_events
+        │   ├── https-//new.vk.com/dev/roadmap
+        │   ├── https-//new.vk.com/dev/rules
+        │   ├── https-//new.vk.com/dev/search
+        │   ├── https-//new.vk.com/dev/secure
+        │   ├── https-//new.vk.com/dev/sendMessage
+        │   ├── https-//new.vk.com/dev/statlogs
+        │   ├── https-//new.vk.com/dev/stats
+        │   ├── https-//new.vk.com/dev/status
+        │   ├── https-//new.vk.com/dev/storage
+        │   ├── https-//new.vk.com/dev/store
+        │   ├── https-//new.vk.com/dev/stories
+        │   ├── https-//new.vk.com/dev/stories_api
+        │   ├── https-//new.vk.com/dev/streaming
+        │   ├── https-//new.vk.com/dev/streaming_api_docs
+        │   ├── https-//new.vk.com/dev/test_it
+        │   ├── https-//new.vk.com/dev/test_vk_apps_rules
+        │   ├── https-//new.vk.com/dev/testusample
+        │   ├── https-//new.vk.com/dev/upload_files
+        │   ├── https-//new.vk.com/dev/users
+        │   ├── https-//new.vk.com/dev/users.setSecretMatchInfo
+        │   ├── https-//new.vk.com/dev/using_longpoll
+        │   ├── https-//new.vk.com/dev/uterms
+        │   ├── https-//new.vk.com/dev/utils
+        │   ├── https-//new.vk.com/dev/versions
+        │   ├── https-//new.vk.com/dev/video
+        │   ├── https-//new.vk.com/dev/vkCharity
+        │   ├── https-//new.vk.com/dev/vk_apps_docs
+        │   ├── https-//new.vk.com/dev/vk_apps_functionality
+        │   ├── https-//new.vk.com/dev/vk_apps_interface
+        │   ├── https-//new.vk.com/dev/vk_apps_personal_data
+        │   ├── https-//new.vk.com/dev/vk_apps_rules
+        │   ├── https-//new.vk.com/dev/vk_apps_security
+        │   ├── https-//new.vk.com/dev/vk_payments
+        │   ├── https-//new.vk.com/dev/vk_tunnel
+        │   ├── https-//new.vk.com/dev/vkbridge
+        │   ├── https-//new.vk.com/dev/vkpay
+        │   ├── https-//new.vk.com/dev/vkwebappdevicemotion_events
+        │   ├── https-//new.vk.com/dev/wall
+        │   ├── https-//new.vk.com/dev/widget_contact_us
+        │   ├── https-//new.vk.com/dev/widget_contactus
+        │   ├── https-//new.vk.com/dev/widgets
+        │   ├── https-//new.vk.com/dev/widgets_for_sites
+        │   ├── https-//new.vk.com/jobs
+        │   ├── https-//new.vk.com/join
+        │   ├── https-//new.vk.com/restore
+        │   ├── https-//new.vk.com/support
+        │   └── https-//new.vk.com/terms
+        ├── https-//vk.com/andrewnovoselsky
+        │   ├── https-//vk.com/photo53448_456249098
+        │   ├── https-//vk.com/photo53448_457260529
+        │   ├── https-//vk.com/photo53448_457260532
+        │   ├── https-//vk.com/search
+        │   ├── https-//vk.com/video53448_456240064
+        │   ├── https-//vk.com/wall53448_9390
+        │   ├── https-//vk.com/wall53448_9398
+        │   ├── https-//vk.com/wall53448_9401
+        │   ├── https-//vk.com/wall53448_9404
+        │   └── https-//vk.com/wall53448_9408
+        ├── https-//vk.com/away.php
+        └── https-//vk.com/blog
+            ├── https-//vk.com/blog/2020
+            ├── https-//vk.com/blog/clips
+            ├── https-//vk.com/blog/combo
+            ├── https-//vk.com/blog/cska
+            ├── https-//vk.com/blog/design-2020
+            ├── https-//vk.com/blog/focus
+            ├── https-//vk.com/blog/food-and-symptoms-tracker
+            ├── https-//vk.com/blog/ipad-2021
+            ├── https-//vk.com/blog/messenger-2020
+            ├── https-//vk.com/blog/new-group-calls
+            ├── https-//vk.com/blog/new-in-superapp
+            ├── https-//vk.com/blog/speech-recognition
+            ├── https-//vk.com/blog/the-future-is-here
+            ├── https-//vk.com/blog/themefeeds
+            ├── https-//vk.com/blog/verification
+            ├── https-//vk.com/blog/vk-connect
+            ├── https-//vk.com/blog/vk-donut
+            ├── https-//vk.com/blog/vk-fresh-code
+            ├── https-//vk.com/blog/vk-health
+            ├── https-//vk.com/blog/vk-results-2019
+            ├── https-//vk.com/press
+            └── https-//vk.com/products

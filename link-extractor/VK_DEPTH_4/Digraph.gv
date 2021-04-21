@@ -1,0 +1,26 @@
+digraph {
+	"https-//vk.com" [label="https-//vk.com" color=violet]
+	"https-//vk.me" [label="https-//vk.me" color=blue]
+	"https-//vk.com/login" [label="https-//vk.com/login" color=blue]
+	"https-//vk.com/blog/vkme" [label="https-//vk.com/blog/vkme" color=blue]
+	"https-//vk.com/blog" [label="https-//vk.com/blog" color=blue]
+	"https-//vk.com/andrewnovoselsky" [label="https-//vk.com/andrewnovoselsky" color=blue]
+	"https-//vk.com/away.php" [label="https-//vk.com/away.php" color=blue]
+	"https-//vk.com" -> "https-//vk.me"
+	"https-//vk.com" -> "https-//vk.com/login"
+	"https-//vk.com" -> "https-//vk.com"
+	"https-//vk.me" -> "https-//vk.me"
+	"https-//vk.me" -> "https-//vk.com/blog/vkme"
+	"https-//vk.me" -> "https-//vk.com"
+	"https-//vk.com/login" -> "https-//vk.me"
+	"https-//vk.com/login" -> "https-//vk.com/login"
+	"https-//vk.com/blog/vkme" -> "https-//vk.com/blog"
+	"https-//vk.com/blog/vkme" -> "https-//vk.com/away.php"
+	"https-//vk.com/blog/vkme" -> "https-//vk.com/andrewnovoselsky"
+	"https-//vk.com/blog" -> "https-//vk.com/blog"
+	"https-//vk.com/blog" -> "https-//vk.com/login"
+	"https-//vk.com/andrewnovoselsky" -> "https-//vk.com/away.php"
+	"https-//vk.com/andrewnovoselsky" -> "https-//vk.com/andrewnovoselsky"
+	"https-//vk.com/away.php" -> "https-//vk.me"
+	"https-//vk.com/away.php" -> "https-//vk.com/login"
+}

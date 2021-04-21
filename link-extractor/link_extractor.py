@@ -1,12 +1,6 @@
 from copy import copy
-import pydot
-from multiprocessing import Process, Queue
 
 import matplotlib as matplotlib
-from pandas import DataFrame
-
-matplotlib.use('PS')
-import matplotlib.pyplot as plt
 import nx as nx
 import requests
 import colorama
@@ -16,12 +10,16 @@ import threading
 import time
 
 from urllib.parse import urlparse, urljoin
+
+import treelib as treelib
 from bs4 import BeautifulSoup
 from fractions import Fraction
 
 from graphviz import Digraph
 
 import _thread
+
+from treelib import Tree
 
 main_graph = Digraph()
 main_graph.clear()
@@ -50,6 +48,7 @@ active_threads_count = 0
 
 start_time = time.time()
 dont_ignore_threads = True
+tree = Tree()
 
 
 def is_valid(url):
@@ -96,11 +95,11 @@ def get_all_website_links(url, parent_url=""):
             continue
         if href in internal_urls:
             # already in the set
-            add_node(href, parent_url, is_external=True)
+            add_node(href, parent_url)
             continue
         if domain_name not in href:
             # external link
-            add_node(href, parent_url, is_external=True)
+            add_node(href, parent_url)
 
             if href not in external_urls:
                 print(f"{RED}[!] External link: {href}{RESET}")
@@ -108,7 +107,7 @@ def get_all_website_links(url, parent_url=""):
                 external_urls.add(href)
             continue
         print(f"{GREEN}[*] Internal link: {href}{RESET}")
-        add_node(href, parent_url, is_external=False)
+        add_node(href, parent_url)
         urls.add(href)
         internal_urls.add(href)
     return urls
@@ -146,7 +145,7 @@ def remove_protocol(url):
     return copy(str(url)).replace(":", "-")
 
 
-def add_node(childUrl, parentUrl, is_external=True):
+def add_node(childUrl, parentUrl):
     global node_connections
 
     childUrl = remove_protocol(childUrl)
@@ -156,6 +155,11 @@ def add_node(childUrl, parentUrl, is_external=True):
         node_connections.get(parentUrl).add(childUrl)
     else:
         node_connections.__setitem__(parentUrl, set(childUrl))
+
+    try:
+        tree.create_node(childUrl, childUrl, parent=parentUrl)
+    except treelib.exceptions.DuplicatedNodeIdError:
+        return
 
 
 def transform(matrix):
@@ -245,8 +249,6 @@ def finalize():
     node_connections = edges_filter(node_connections)
     white_list = node_connections.keys()
 
-    # print(f"\n{node_connections}\n")
-
     for link in white_list:
         if link == remove_protocol(url):
             main_graph.node(name=remove_protocol(link), label=link, color="violet")
@@ -305,15 +307,13 @@ def finalize():
         time_spend = time.time() - start_time
         print(f"{GREEN}[!] Time wasted: {time_spend}{RESET}")
         print(f"{GREEN}[!] With average speed {len(external_urls) + len(internal_urls) / time_spend} links per second")
-        print(f"{RED}[?] Rendering graph{RESET}")
+        print(f"{RED}[?] Saving url topology {RESET}")
+
+        tree.save2file(f'{domain_name}_url_topology.txt')
+
         main_graph.save()
         main_graph.render(filename="PAGERANK_GRAPH")
         main_graph.view()
-
-
-        #
-        # (graph,) = pydot.graph_from_dot_file('somefile.dot')
-        # graph.write_png('somefile.png')
     else:
         print("EMPTY MATRIX")
 
@@ -324,8 +324,6 @@ def thread_hunter():
     while True:
         if last_count == threading.activeCount() or threading.activeCount() == 1:
             dont_ignore_threads = False
-            print(threads)
-
             break
         else:
             last_count = threading.activeCount()
@@ -351,6 +349,7 @@ if __name__ == "__main__":
     max_depth = args.depth
 
     internal_urls.add(url)
+    tree.create_node(remove_protocol(url), remove_protocol(url))  # root
     crawl(url, parent_url=url, max_depth=max_depth)
 
     thread_killer = threading.Thread(target=thread_hunter)

@@ -1,0 +1,7 @@
+('https-//vk.com', Fraction(2413641301, 17940234375))
+('https-//vk.me', Fraction(673829551, 2562890625))
+('https-//vk.com/login', Fraction(4116153971, 17940234375))
+('https-//vk.com/blog/vkme', Fraction(1770025193, 17940234375))
+('https-//vk.com/blog', Fraction(1641202351, 17940234375))
+('https-//vk.com/andrewnovoselsky', Fraction(1641202351, 17940234375))
+('https-//vk.com/away.php', Fraction(1641202351, 17940234375))
